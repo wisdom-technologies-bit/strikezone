@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
-import { formatMoney } from "@/lib/money";
+import { formatMoney, parseMoney, type MoneyConfig } from "@/lib/money";
 
 /** Digits and at most one decimal point. Everything else is dropped as typed. */
 function sanitizeText(raw: string): string {
@@ -19,15 +19,9 @@ function sanitizeText(raw: string): string {
   return out;
 }
 
-/** Digits and at most one separator; everything else is dropped. */
+/** The same parser the rest of the app uses, so the field cannot round. */
 function minorFromText(text: string): number | null {
-  const cleaned = text.replace(/[^0-9.]/g, "");
-  if (cleaned === "" || cleaned === ".") return null;
-  const [wholePart = "", fractionPart = ""] = cleaned.split(".");
-  const whole = wholePart === "" ? 0 : Number(wholePart);
-  if (!Number.isSafeInteger(whole)) return null;
-  const fraction = Number(`${fractionPart}00`.slice(0, 2));
-  return whole * 100 + fraction;
+  return parseMoney(text);
 }
 
 /** 123456 -> "1234.56"; 100000 -> "1000". Keeps trailing ".00" out of the field. */
@@ -47,7 +41,8 @@ export interface StakeInputProps {
   max?: number;
   /** Minor units. One tap fills the field. */
   quickAmounts?: readonly number[];
-  currency: string;
+  /** Currency and mode, straight from GET /api/config. */
+  config: MoneyConfig;
   label?: string;
   hint?: string;
   disabled?: boolean;
@@ -57,10 +52,10 @@ export interface StakeInputProps {
 export function StakeInput({
   value,
   onValueChange,
+  config,
   min,
   max,
   quickAmounts = [10000, 50000, 100000, 500000],
-  currency,
   label = "Stake",
   hint,
   disabled = false,
@@ -89,9 +84,9 @@ export function StakeInput({
   const belowMin = parsed !== null && parsed < min;
   const aboveMax = parsed !== null && max !== undefined && parsed > max;
   const error = belowMin
-    ? `Minimum stake is ${formatMoney(min, currency)}`
+    ? `Minimum stake is ${formatMoney(min, config)}`
     : aboveMax && max !== undefined
-      ? `Maximum stake is ${formatMoney(max, currency)}`
+      ? `Maximum stake is ${formatMoney(max, config)}`
       : null;
 
   const clamp = () => {
@@ -116,7 +111,7 @@ export function StakeInput({
         <label htmlFor={inputId} className="text-small font-medium text-ink-muted">
           {label}
         </label>
-        <span className="num text-micro text-ink-faint">{formatMoney(min, currency)} min</span>
+        <span className="num text-micro text-ink-faint">{formatMoney(min, config)} min</span>
       </div>
 
       <div
@@ -145,7 +140,7 @@ export function StakeInput({
           className="num h-full min-w-0 flex-1 bg-transparent text-body text-ink placeholder:text-ink-faint focus:outline-none disabled:cursor-not-allowed disabled:text-ink-faint"
           placeholder="0"
         />
-        <span className="num shrink-0 text-small text-ink-faint">{currency}</span>
+        <span className="num shrink-0 text-small text-ink-faint">{config.currency}</span>
       </div>
 
       {error ? (
@@ -154,7 +149,7 @@ export function StakeInput({
         </p>
       ) : (
         <p id={messageId} className="num text-micro text-ink-faint">
-          {parsed === null ? "No stake set" : `= ${formatMoney(parsed, currency)}`}
+          {parsed === null ? "No stake set" : `= ${formatMoney(parsed, config)}`}
         </p>
       )}
 
@@ -179,7 +174,7 @@ export function StakeInput({
                   : "border-line bg-panel text-ink-muted hover:border-line-strong hover:bg-raised hover:text-ink",
               )}
             >
-              {formatMoney(amount, currency, { withCurrency: false })}
+              {formatMoney(amount, config, { withCurrency: false })}
             </button>
           );
         })}

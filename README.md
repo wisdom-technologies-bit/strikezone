@@ -175,6 +175,46 @@ The 60 on the gallery is `is-crawlable`: `/dev/ui` sends `noindex, nofollow` on 
 | `/`                                                      | Title only                               |
 | `/live`, `/tournaments`, `/wallet`, `/bets`, `/fairness` | Title only                               |
 | `/dev/ui`                                                | Design system gallery, 404 in production |
+| `/dev/data`                                              | Data layer probe, 404 in production      |
+
+## The data layer
+
+The browser talks to the game server through one wrapper, and every response is parsed by a
+schema from `src/contract` before a component can see it. A protocol change fails at the
+boundary with a `ContractMismatchError` naming the route, rather than rendering half a page.
+
+| Concern      | Where                          | Behaviour                                                                                                       |
+| ------------ | ------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| Fetching     | `src/lib/api/client.ts`        | 15s timeout, GET retried twice with backoff, POST never retried, errors normalised to status + code             |
+| Routes       | `src/lib/api/endpoints.ts`     | Every public and user route from the handoff, one function each                                                 |
+| Reads        | `src/lib/api/queries.ts`       | Per-data staleness; user queries disabled until there is a session                                              |
+| Cold start   | `src/lib/api/server-status.ts` | A request slower than 4s, or a 502/503/504, raises the waking notice and polls `/health` every 3s for up to 90s |
+| Live updates | `src/lib/realtime/`            | One channel per table and filter, merged into the query cache; polling after 5s if the channel does not join    |
+| Spectating   | `src/lib/stream/`              | Bare origin, contract-decoded frames, reconnect with backoff, skipped shots counted                             |
+| Money        | `src/lib/money.ts`             | Integer minor units, string arithmetic, currency and mode from `/api/config`                                    |
+| Refusals     | `src/lib/errors/bet-errors.ts` | All 22 bet codes plus deposit and withdrawal blocks, in plain language                                          |
+
+`/dev/data` shows the layer working: env names with a set/missing dot and no values, health
+with a latency, the whole config, the three match lists, and one match's markets and stream.
+
+### Environment
+
+Copy `.env.example` to `.env.local`. The four public values are validated on first read; a
+missing one shows a full configuration page in development and a log line in production.
+
+| Name                            | Scope       | Used by                                                               |
+| ------------------------------- | ----------- | --------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | browser     | Supabase client, Realtime                                             |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | browser     | Supabase client (RLS guards the data)                                 |
+| `NEXT_PUBLIC_API_BASE`          | browser     | REST client                                                           |
+| `NEXT_PUBLIC_SOCKET_URL`        | browser     | Colyseus, **bare origin, no path**                                    |
+| `SUPABASE_SERVICE_ROLE_KEY`     | server only | future admin server actions                                           |
+| `ADMIN_API_KEY`                 | server only | future admin server actions                                           |
+| `ADMIN_ROUTE_SLUG`              | server only | the admin path; there is no `/admin`                                  |
+| `GALLERY_PREVIEW`               | server      | `=1` exposes `/dev/ui` and `/dev/data` where they would otherwise 404 |
+
+On Vercel, set the four `NEXT_PUBLIC_` values per environment. `NEXT_PUBLIC_SOCKET_URL` must be
+the bare `wss://` origin or every spectator join answers 404 for a room that exists.
 
 ## Decisions worth a review
 
@@ -188,3 +228,16 @@ The 60 on the gallery is `is-crawlable`: `/dev/ui` sends `noindex, nofollow` on 
    `src/lib/config.ts`, the one place `moneyMode` and `currency` are read until
    `GET /api/config` is wired. `currency` is never hardcoded in a component, so switching to
    `NGN` needs no component change. Sign in shows a toast saying it is not wired yet.
+5. **Money is config, not a string.** `formatMoney(minor, config)` takes `{currency, moneyMode}`
+   and `StakeInput` takes the same object, so `XTS` to `NGN` is a server change and not a
+   component change. `parseMoney` is string arithmetic: `"0.29"` is 29, never 28.
+6. **`odds_moved` is not a refusal.** `priceDirection` compares the price the player saw with
+   the new one, and `needsConfirmationAgain` marks the code that asks again rather than
+   apologising. `house_account_missing` and `escrow_account_missing` are named as server
+   faults, because a retry cannot fix them.
+7. **Only GET is retried.** A POST that timed out may have been applied; a bet retry reuses
+   its idempotency key instead of guessing.
+8. **Waking, not spinning.** A slow server raises a slim notice under the top bar and polls
+   `/health`; the page does not hold a request open for a minute in silence.
+9. **`/dev/data` reads only.** It proves the layer against the live server without a write
+   path, and it is 404 in production unless `GALLERY_PREVIEW=1` is deliberately set.

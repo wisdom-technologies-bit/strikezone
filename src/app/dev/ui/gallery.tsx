@@ -26,7 +26,10 @@ import { useToast } from "@/components/ui/toast";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Wordmark } from "@/components/ui/wordmark";
 import { CONTRAST_PAIRS, CONTRAST_SUMMARY } from "@/lib/contrast-table";
-import { formatMoney } from "@/lib/money";
+import { formatMoney, type MoneyConfig } from "@/lib/money";
+
+/** The gallery shows the virtual currency, the way the shell does today. */
+const GALLERY_MONEY: MoneyConfig = { currency: "XTS", moneyMode: "virtual" };
 
 const TOKENS: readonly { name: string; value: string; varName: string; note?: string }[] = [
   { name: "surface-0", value: "#0A0F1A", varName: "--surface-0", note: "page" },
@@ -271,7 +274,7 @@ export function Gallery() {
             onValueChange={setStake}
             min={100}
             max={5000000}
-            currency="XTS"
+            config={GALLERY_MONEY}
             hint="Between 1.00 and 50,000.00."
           />
           <StakeInput
@@ -279,7 +282,7 @@ export function Gallery() {
             onValueChange={() => undefined}
             min={100}
             max={5000000}
-            currency="XTS"
+            config={GALLERY_MONEY}
             label="Stake (disabled)"
             disabled
           />
@@ -407,10 +410,10 @@ export function Gallery() {
           />
           <PanelBody>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Stat label="Available" value={formatMoney(2500000, "XTS")} />
-              <Stat label="At risk" value={formatMoney(10000, "XTS")} tone="warn" />
+              <Stat label="Available" value={formatMoney(2500000, GALLERY_MONEY)} />
+              <Stat label="At risk" value={formatMoney(10000, GALLERY_MONEY)} tone="warn" />
               <Stat label="Odds" value="3.64" />
-              <Stat label="Payout" value={formatMoney(36400, "XTS")} tone="win" />
+              <Stat label="Payout" value={formatMoney(36400, GALLERY_MONEY)} tone="win" />
             </div>
           </PanelBody>
           <PanelFooter>
@@ -613,7 +616,7 @@ export function Gallery() {
             onValueChange={setStake}
             min={100}
             max={5000000}
-            currency="XTS"
+            config={GALLERY_MONEY}
           />
         </div>
       </Sheet>

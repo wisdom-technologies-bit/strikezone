@@ -14,7 +14,9 @@
     "test:watch": "vitest",
     "audit:mobile": "node scripts/audit-mobile.mjs",
     "audit:lighthouse": "node scripts/lighthouse.mjs",
-    "contract:check": "node scripts/contract-check.mjs"
+    "contract:check": "node scripts/contract-check.mjs",
+    "secrets:check": "node scripts/check-secrets.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run contract:check && npm run secrets:check && npm run test"
   },
   "dependencies": {
     "@colyseus/sdk": "^0.18.9",

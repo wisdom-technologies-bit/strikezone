@@ -5,6 +5,9 @@ import "./globals.css";
 import { AppShell } from "@/components/shell/app-shell";
 import { ToastProvider } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ConfigError } from "@/components/shell/config-error";
+import { QueryProvider } from "@/components/providers/query-provider";
+import { getPublicEnv, reportEnvProblemsOnce } from "@/lib/env";
 
 export const metadata: Metadata = {
   title: { default: "Strikezone", template: "%s · Strikezone" },
@@ -22,6 +25,24 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const env = getPublicEnv();
+
+  if (!env.ok) {
+    // Development fails loudly on a full page; production logs and keeps serving,
+    // because a blank page tells an operator less than a log line does.
+    if (process.env.NODE_ENV === "production") {
+      reportEnvProblemsOnce();
+    } else {
+      return (
+        <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+          <body>
+            <ConfigError issues={env.issues} />
+          </body>
+        </html>
+      );
+    }
+  }
+
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
@@ -31,11 +52,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <ToastProvider>
-          <TooltipProvider>
-            <AppShell>{children}</AppShell>
-          </TooltipProvider>
-        </ToastProvider>
+        <QueryProvider>
+          <ToastProvider>
+            <TooltipProvider>
+              <AppShell>{children}</AppShell>
+            </TooltipProvider>
+          </ToastProvider>
+        </QueryProvider>
       </body>
     </html>
   );

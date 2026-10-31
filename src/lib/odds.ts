@@ -13,8 +13,13 @@ export function formatOdds(oddsDecimal: number): string {
   return oddsDecimal.toFixed(ODDS_PLACES);
 }
 
-/** The price the player saw against the price the server now offers. */
-export function compareOdds(previous: number, next: number): "up" | "down" | "same" {
+/**
+ * The price the player saw against the price the server now offers.
+ *
+ * Used after an `odds_moved` refusal and on a realtime repricing: the UI shows the
+ * movement and asks again rather than silently accepting the new number.
+ */
+export function priceDirection(previous: number, next: number): "up" | "down" | "same" {
   if (next > previous) return "up";
   if (next < previous) return "down";
   return "same";

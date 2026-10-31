@@ -33,10 +33,10 @@ export function TopBar({ config, balanceMinor = 0, signedIn = false }: TopBarPro
         {signedIn ? (
           <span
             className="flex h-control-sm min-w-0 items-center gap-1 rounded-control border border-line bg-raised px-2"
-            aria-label={`Balance ${formatMoney(balanceMinor, config.currency)}`}
+            aria-label={`Balance ${formatMoney(balanceMinor, config)}`}
           >
             <span className="num truncate text-small text-ink">
-              {formatMoney(balanceMinor, config.currency)}
+              {formatMoney(balanceMinor, config)}
             </span>
             {config.moneyMode === "virtual" ? (
               <span className="hidden text-micro text-ink-faint sm:inline">test</span>

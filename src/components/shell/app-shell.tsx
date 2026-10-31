@@ -12,6 +12,8 @@ import { getPublicConfig } from "@/lib/config";
 import { useSlip } from "@/lib/slip/use-slip";
 import { shouldShowSlipBar, shouldShowSlipPanel } from "@/lib/slip/visibility";
 import { isMatchPath } from "./bet-slip-slot";
+import { ServerNotice } from "./server-notice";
+import { useServerStatus } from "@/lib/api/use-server-status";
 
 const RAIL_KEY = "sz.rail.expanded";
 
@@ -36,6 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const config = getPublicConfig();
   const pathname = usePathname();
   const slip = useSlip();
+  const serverStatus = useServerStatus();
   const [expanded, setExpanded] = useState(false);
 
   const slipInput = {
@@ -55,11 +58,15 @@ export function AppShell({ children }: { children: ReactNode }) {
     });
   };
 
+  // Each row the chrome carries is a token; the sum is computed here once.
+  const chromeRows = [
+    "var(--topbar-h)",
+    config.moneyMode === "virtual" ? "var(--notice-h)" : null,
+    serverStatus === "waking" ? "var(--notice-h)" : null,
+  ].filter((row): row is string => row !== null);
+
   const shellStyle = {
-    "--chrome-h":
-      config.moneyMode === "virtual"
-        ? "calc(var(--topbar-h) + var(--notice-h))"
-        : "var(--topbar-h)",
+    "--chrome-h": `calc(${chromeRows.join(" + ")})`,
     "--rail-current-w": expanded ? "var(--rail-w-expanded)" : "var(--rail-w-collapsed)",
   } as CSSProperties;
 
@@ -73,6 +80,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="sz-chrome">
         <TopBar config={config} />
         <NoticeStrip moneyMode={config.moneyMode} />
+        <ServerNotice />
       </header>
 
       <Rail expanded={expanded} onToggle={toggleRail} />

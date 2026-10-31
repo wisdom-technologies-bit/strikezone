@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { compareOdds, formatOdds, potentialPayoutMinor } from "./odds";
+import { formatOdds, potentialPayoutMinor, priceDirection } from "./odds";
 
 describe("odds", () => {
   it("formats to two places, always", () => {
@@ -8,10 +8,15 @@ describe("odds", () => {
     expect(formatOdds(1.005)).toBe("1.00");
   });
 
+  it("treats a move in the third decimal as no move at all", () => {
+    expect(priceDirection(3.64, 3.6401)).toBe("up");
+    expect(priceDirection(1.1, 1.1)).toBe("same");
+  });
+
   it("describes the direction of a price move", () => {
-    expect(compareOdds(3.64, 3.76)).toBe("up");
-    expect(compareOdds(3.64, 3.5)).toBe("down");
-    expect(compareOdds(3.64, 3.64)).toBe("same");
+    expect(priceDirection(3.64, 3.76)).toBe("up");
+    expect(priceDirection(3.64, 3.5)).toBe("down");
+    expect(priceDirection(3.64, 3.64)).toBe("same");
   });
 
   it("rounds a payout down to whole minor units", () => {

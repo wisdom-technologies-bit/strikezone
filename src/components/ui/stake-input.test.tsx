@@ -7,7 +7,7 @@ import { StakeInput } from "./stake-input";
 const baseProps = {
   min: 100, // 1.00
   max: 500000, // 5,000.00
-  currency: "XTS",
+  config: { currency: "XTS", moneyMode: "virtual" } as const,
   quickAmounts: [10000, 50000] as const,
 };
 
