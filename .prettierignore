@@ -1,0 +1,4 @@
+.next
+node_modules
+src/contract/contract.ts
+package-lock.json
