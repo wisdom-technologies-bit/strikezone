@@ -1,0 +1,297 @@
+@import "../styles/tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    background-color: var(--surface-0);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--surface-0);
+    min-height: 100dvh;
+    overflow-x: hidden; /* rule 8: no horizontal page scroll */
+  }
+
+  /* Numbers are the product here: tabular figures everywhere by default. */
+  body {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--brass-tint);
+    color: var(--text);
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* A focused control inside a panel should not be clipped by overflow. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  input,
+  button,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Firefox scrollbars inside dense containers */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: var(--radius-full);
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Page gutter: 12px on mobile, 16px from 1024px. One utility, one source. */
+  .page-gutter {
+    padding-inline: var(--gutter-mobile);
+  }
+
+  @media (min-width: 1024px) {
+    .page-gutter {
+      padding-inline: var(--gutter-desktop);
+    }
+  }
+
+  /*
+   * Rule 8 wants 36px tap targets; the density spec wants 28px controls on a
+   * desktop. Resolve it by pointer type, not by width: a touch pointer gets the
+   * floor through the pseudo-element so the layout does not move.
+   */
+  .tap-target {
+    position: relative;
+  }
+
+  /* Below the desktop breakpoint the hit area never drops under 36px, whatever
+     size the control is drawn at. Desktop keeps the 28/32/36 density. */
+  @media (max-width: 1023px) {
+    .tap-target {
+      min-height: var(--control-h-touch);
+    }
+  }
+}
+
+@layer utilities {
+  /* A number that matters: mono, tabular, no ligature surprises. */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+
+  .hairline-t {
+    box-shadow: inset 0 1px 0 var(--border);
+  }
+
+  .hairline-b {
+    box-shadow: inset 0 -1px 0 var(--border);
+  }
+
+  /* Only used to animate an odds flash; harmless when motion is reduced. */
+  @keyframes sz-flash-in {
+    from {
+      opacity: 0.4;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .flash-anim {
+    animation: sz-flash-in var(--motion-fast) var(--ease-out);
+  }
+}
+
+@layer utilities {
+  /* Entrance for overlays, sheets and dialogs. Tokens carry the duration; the
+     global reduced-motion rule collapses it to nothing. */
+  @keyframes sz-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes sz-sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes sz-dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .sz-overlay[data-state="open"] {
+    animation: sz-fade var(--motion-base) var(--ease-out);
+  }
+
+  .sz-sheet[data-state="open"] {
+    animation: sz-sheet-in var(--motion-base) var(--ease-out);
+  }
+
+  .sz-dialog[data-state="open"] {
+    animation: sz-dialog-in var(--motion-base) var(--ease-out);
+  }
+
+  @media (min-width: 768px) {
+    @keyframes sz-sheet-in-right {
+      from {
+        opacity: 0;
+        transform: translateX(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .sz-sheet[data-state="open"] {
+      animation: sz-sheet-in-right var(--motion-base) var(--ease-out);
+    }
+  }
+}
+
+@layer components {
+  /* ---- Shell geometry. All values are tokens; the shell only supplies the two
+     computed heights (chrome and current rail width) as CSS variables. --------- */
+  .sz-chrome {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: var(--z-topbar);
+    background-color: var(--surface-1);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sz-main {
+    padding-top: var(--chrome-h);
+    padding-bottom: calc(var(--tabbar-h) + var(--betslip-h) + var(--space-4));
+  }
+
+  .sz-rail {
+    position: fixed;
+    left: 0;
+    top: var(--chrome-h);
+    bottom: 0;
+    z-index: var(--z-rail);
+    width: var(--rail-current-w, var(--rail-w-collapsed));
+    background-color: var(--surface-1);
+    border-right: 1px solid var(--border);
+  }
+
+  /*
+   * A text field whose border is drawn inside the padding box: the inner input
+   * can then fill the full control height, and the border is not a 1px strip
+   * that silently misses the tap.
+   */
+  .field-surface {
+    box-shadow: inset 0 0 0 1px var(--border);
+    transition: box-shadow var(--motion-fast) var(--ease-out);
+  }
+
+  .field-surface:hover {
+    box-shadow: inset 0 0 0 1px var(--border-strong);
+  }
+
+  .field-surface:focus-within {
+    box-shadow: inset 0 0 0 1px var(--brass-600);
+  }
+
+  .field-surface[data-invalid="true"] {
+    box-shadow: inset 0 0 0 1px var(--loss);
+  }
+
+  .sz-tabbar {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: var(--z-tabbar);
+    height: var(--tabbar-h);
+    background-color: var(--surface-1);
+    border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .sz-betslip {
+    position: fixed;
+    inset-inline: 0;
+    bottom: var(--tabbar-h);
+    z-index: var(--z-tabbar);
+    height: var(--betslip-h);
+    background-color: var(--surface-1);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (min-width: 1024px) {
+    .sz-main {
+      padding-left: var(--rail-current-w, var(--rail-w-collapsed));
+      padding-bottom: var(--space-6);
+    }
+
+    .sz-tabbar,
+    .sz-betslip {
+      display: none;
+    }
+  }
+}

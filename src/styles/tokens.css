@@ -1,0 +1,161 @@
+/*
+ * Design tokens. The single source of every colour, size, radius, spacing,
+ * type and motion value in the product. Components read these through Tailwind
+ * (see tailwind.config.ts) and never declare a raw value of their own.
+ *
+ * Dark theme only for now. When a light theme arrives it is another token block
+ * with the same names, not a second set of components.
+ *
+ * Contrast: every text/background pair in use is listed in README.md with its
+ * measured ratio. text-faint was lifted from #66728A to #7A869F because the
+ * original measured 3.47:1 on surface-2 and failed AA for body text.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* ---- Surfaces ---------------------------------------------------------- */
+  --surface-0: #0a0f1a; /* page */
+  --surface-1: #0f1626; /* panels */
+  --surface-2: #151d30; /* raised, hover */
+
+  /* ---- Borders ----------------------------------------------------------- */
+  --border: #1f2a42;
+  --border-strong: #2b3a5a;
+
+  /* ---- Text -------------------------------------------------------------- */
+  --text: #e7ebf3;
+  --text-muted: #94a0b8;
+  --text-faint: #7a869f; /* non-essential labels only; 4.59:1 on surface-2 */
+  --text-inverse: #0a0f1a; /* on brass */
+
+  /* ---- Accent ------------------------------------------------------------ */
+  --brass-500: #c8a24a;
+  --brass-600: #a8852f;
+  --brass-tint: rgba(200, 162, 74, 0.12);
+  --brass-tint-solid: #25272a; /* the tint composited over surface-1, for exact maths */
+
+  /* ---- Status ------------------------------------------------------------ */
+  --win: #2cbfa6;
+  --loss: #e5586d;
+  --warn: #e0a93b;
+  --info: #5b8def;
+
+  /* 12% tints, composited over surface-1 so a badge is one solid colour */
+  --win-tint: rgba(44, 191, 166, 0.12);
+  --loss-tint: rgba(229, 88, 109, 0.12);
+  --warn-tint: rgba(224, 169, 59, 0.12);
+  --info-tint: rgba(91, 141, 239, 0.12);
+  --win-tint-solid: #122a35;
+  --loss-tint-solid: #291e2f;
+  --warn-tint-solid: #282829;
+  --info-tint-solid: #18243e;
+
+  /* ---- Focus and one shadow --------------------------------------------- */
+  --focus-ring: #c8a24a;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --shadow-sheet: 0 12px 32px rgba(0, 0, 0, 0.45); /* sheets and dialogs only */
+  --overlay: rgba(6, 9, 16, 0.72);
+
+  /* ---- Radii ------------------------------------------------------------- */
+  --radius-control: 4px;
+  --radius-panel: 6px;
+  --radius-table: 0px;
+  --radius-full: 999px;
+
+  /* ---- Type -------------------------------------------------------------- */
+  --font-ui: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+
+  --text-body: 13px;
+  --leading-body: 18px;
+  --text-small: 12px;
+  --leading-small: 16px;
+  --text-micro: 11px;
+  --leading-micro: 14px;
+  --text-section: 14px;
+  --leading-section: 20px;
+  --text-title: 16px;
+  --leading-title: 22px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  --tracking-tight: -0.01em;
+  --tracking-wide: 0.06em;
+  --tracking-wordmark: 0.18em;
+
+  /* ---- Controls ---------------------------------------------------------- */
+  --control-h-sm: 28px;
+  --control-h-md: 32px;
+  --control-h-lg: 36px;
+  --control-h-touch: 36px; /* floor for coarse pointers */
+  --control-px-sm: 8px;
+  --control-px-md: 10px;
+  --control-px-lg: 12px;
+
+  /* ---- Spacing: 4px scale ------------------------------------------------ */
+  --space-0: 0px;
+  --space-px: 1px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  --gutter-mobile: 12px;
+  --gutter-desktop: 16px;
+
+  --row-h-dense: 32px;
+  --row-h-comfortable: 40px;
+
+  /* ---- Shell ------------------------------------------------------------- */
+  --topbar-h: 44px;
+  --notice-h: 28px;
+  --rail-w-collapsed: 48px;
+  --rail-w-expanded: 200px;
+  --tabbar-h: 52px;
+  --betslip-h: 48px;
+  --content-max: 1200px;
+
+  /* ---- Component-level sizes (still tokens: no arbitrary values in code) -- */
+  --space-half: 2px;
+  --switch-w: 34px;
+  --switch-h: 20px;
+  --switch-thumb: 16px;
+  --switch-thumb-on: calc(var(--switch-w) - var(--switch-thumb) - 4px);
+  --checkbox-size: 16px;
+  --sheet-w: 380px;
+  --dialog-w: 420px;
+  --badge-h: 18px;
+  --table-min-w: 520px;
+
+  /* ---- Motion ------------------------------------------------------------ */
+  --motion-fast: 120ms;
+  --motion-base: 160ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --flash-duration: 600ms; /* odds flash, held then cleared by JS */
+
+  /* ---- Layers ------------------------------------------------------------ */
+  --z-rail: 20;
+  --z-topbar: 30;
+  --z-tabbar: 30;
+  --z-overlay: 40;
+  --z-toast: 50;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+    --flash-duration: 0ms;
+  }
+}
