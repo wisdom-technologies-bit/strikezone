@@ -187,6 +187,13 @@ export const createWithdrawal = (input: { amountMinor: number; destination?: str
 
 export const getWithdrawals = () => get(withdrawalsResponseSchema, "/api/withdrawals");
 
+/**
+ * The durations the profile page offers, in hours. The server accepts anything
+ * from 1 to 8760 and only ever lengthens an exclusion.
+ */
+export const SELF_EXCLUSION_HOURS = [24, 168, 720, 2160, 8760] as const;
+export type SelfExclusionHours = (typeof SELF_EXCLUSION_HOURS)[number];
+
 // Re-exported for features that need the row types without the route.
 export type { Market, BetsResponse, TransactionsResponse, WalletResponse };
 export { marketSchema };

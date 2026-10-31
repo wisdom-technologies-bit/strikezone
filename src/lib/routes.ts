@@ -25,7 +25,7 @@ export const MOBILE_TAB_ITEMS: readonly NavItem[] = [
   NAV_ITEMS[1]!,
   NAV_ITEMS[2]!,
   NAV_ITEMS[3]!,
-  { href: "/bets", label: "Me", icon: CircleUser, tabLabel: "Me" },
+  { href: "/me", label: "Me", icon: CircleUser, tabLabel: "Me" },
 ] as const;
 
 export function isActivePath(pathname: string, href: string): boolean {

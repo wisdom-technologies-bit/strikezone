@@ -124,6 +124,7 @@ const config: Config = {
       },
       maxWidth: {
         content: "var(--content-max)",
+        form: "var(--form-max)",
         dialog: "var(--dialog-w)",
       },
       width: {

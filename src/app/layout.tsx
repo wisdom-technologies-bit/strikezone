@@ -7,6 +7,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConfigError } from "@/components/shell/config-error";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { AuthProvider } from "@/components/providers/auth-provider";
 import { getPublicEnv, reportEnvProblemsOnce } from "@/lib/env";
 
 export const metadata: Metadata = {
@@ -53,11 +54,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <QueryProvider>
-          <ToastProvider>
-            <TooltipProvider>
-              <AppShell>{children}</AppShell>
-            </TooltipProvider>
-          </ToastProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <TooltipProvider>
+                <AppShell>{children}</AppShell>
+              </TooltipProvider>
+            </ToastProvider>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

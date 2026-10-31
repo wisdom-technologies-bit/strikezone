@@ -126,6 +126,8 @@
   --betslip-h: 48px;
   --betslip-panel-w: 320px;
   --content-max: 1200px;
+  /* A single-column form: 360px is the width the forms are designed at. */
+  --form-max: 360px;
 
   /* ---- Component-level sizes (still tokens: no arbitrary values in code) -- */
   --space-half: 2px;

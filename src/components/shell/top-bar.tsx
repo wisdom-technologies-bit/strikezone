@@ -1,23 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/ui/wordmark";
-import { useToast } from "@/components/ui/toast";
-
-import { formatMoney } from "@/lib/money";
+import { useAuth } from "@/components/providers/auth-provider";
+import { AccountMenu, SignInLinks } from "@/features/auth/account-menu";
 import type { PublicConfig } from "@/lib/config";
 
 export interface TopBarProps {
   config: PublicConfig;
-  /** Minor units. Only rendered for a signed-in session. */
-  balanceMinor?: number;
-  /** No auth screens yet, so this is false everywhere for now. */
-  signedIn?: boolean;
 }
 
-export function TopBar({ config, balanceMinor = 0, signedIn = false }: TopBarProps) {
-  const toast = useToast();
+/** The chrome that does not change with the page: the wordmark, and who you are. */
+export function TopBar({ config }: TopBarProps) {
+  const { signedIn } = useAuth();
 
   return (
     <div className="flex h-topbar-h items-center gap-2 px-3">
@@ -30,27 +25,7 @@ export function TopBar({ config, balanceMinor = 0, signedIn = false }: TopBarPro
       </Link>
 
       <div className="ml-auto flex min-w-0 items-center gap-2">
-        {signedIn ? (
-          <span
-            className="flex h-control-sm min-w-0 items-center gap-1 rounded-control border border-line bg-raised px-2"
-            aria-label={`Balance ${formatMoney(balanceMinor, config)}`}
-          >
-            <span className="num truncate text-small text-ink">
-              {formatMoney(balanceMinor, config)}
-            </span>
-            {config.moneyMode === "virtual" ? (
-              <span className="hidden text-micro text-ink-faint sm:inline">test</span>
-            ) : null}
-          </span>
-        ) : null}
-
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => toast.show({ title: "Sign-in isn't wired yet", tone: "info" })}
-        >
-          Sign in
-        </Button>
+        {signedIn ? <AccountMenu config={config} /> : <SignInLinks />}
       </div>
     </div>
   );

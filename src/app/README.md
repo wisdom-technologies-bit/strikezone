@@ -42,3 +42,19 @@ curl -s -o /dev/null -w "%{http_code}" localhost:3000/dev/ui     # 404 in produc
 curl -s -o /dev/null -w "%{http_code}" localhost:3000/dev/data   # 404 in production
 GALLERY_PREVIEW=1 npx next start -p 3001                          # both answer 200 for Lighthouse
 ```
+
+## Auth routes
+
+| Route                                     | What it is                                                             |
+| ----------------------------------------- | ---------------------------------------------------------------------- |
+| `/sign-in`                                | email and password                                                     |
+| `/sign-up`                                | email, username, password, the 18-and-policies checkbox                |
+| `/forgot-password`                        | one answer, whether or not the address exists                          |
+| `/reset-password`                         | the new password, after the recovery link                              |
+| `/auth/callback`                          | exchanges an email code for a session, then redirects to a safe `next` |
+| `/me`                                     | account and responsible play                                           |
+| `/terms`, `/responsible-play`, `/privacy` | drafts, marked as drafts                                               |
+
+`middleware.ts` refreshes the session on every page request, redirects a signed-out
+visitor from `/me`, `/wallet` and `/bets` to `/sign-in?next=<path>`, and sends a
+signed-in visitor away from `/sign-in` and `/sign-up`.
