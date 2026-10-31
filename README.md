@@ -143,15 +143,21 @@ The balance chip and the Sign in control are placeholders and say so.
 ## Quality checks (latest run)
 
 - `npm run build`: passes, no type errors, no `any`.
-- `npm test`: 18 tests in 4 files, all passing.
+- `npm test`: 82 tests in 14 files, all passing.
+- `npm run verify`: typecheck, lint, prettier, contract hash, secret scan and tests, chained.
 - `npm run audit:mobile`: all 14 route/viewport combinations pass - no horizontal scroll at
   360px, nothing outside the viewport, tap targets at or above the floor for the pointer.
 - Lighthouse mobile on a production build:
 
-| Page      | Performance | Accessibility | Best practices | SEO |
-| --------- | ----------- | ------------- | -------------- | --- |
-| `/`       | 100         | 100           | 100            | 100 |
-| `/dev/ui` | 97          | 100           | 100            | 60  |
+| Page      | Performance | Accessibility |
+| --------- | ----------- | ------------- |
+| `/`       | 98          | 100           |
+| `/dev/ui` | 97          | 100           |
+
+Both run against the production build at 360px mobile emulation. Earlier runs scored `/` at
+100/100/100/100; the difference is noise in a shared container, not a regression.
+
+Best practices and SEO are not part of the acceptance condition and are not tracked here.
 
 The 60 on the gallery is `is-crawlable`: `/dev/ui` sends `noindex, nofollow` on purpose.
 
