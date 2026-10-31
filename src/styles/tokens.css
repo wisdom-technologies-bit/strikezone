@@ -124,6 +124,7 @@
   --rail-w-expanded: 200px;
   --tabbar-h: 52px;
   --betslip-h: 48px;
+  --betslip-panel-w: 320px;
   --content-max: 1200px;
 
   /* ---- Component-level sizes (still tokens: no arbitrary values in code) -- */

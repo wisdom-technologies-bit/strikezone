@@ -226,6 +226,11 @@
 
   .sz-main {
     padding-top: var(--chrome-h);
+    padding-bottom: calc(var(--tabbar-h) + var(--space-4));
+  }
+
+  /* The bar only takes space when it is actually on screen. */
+  [data-slip-bar="true"] .sz-main {
     padding-bottom: calc(var(--tabbar-h) + var(--betslip-h) + var(--space-4));
   }
 
@@ -281,6 +286,24 @@
     height: var(--betslip-h);
     background-color: var(--surface-1);
     border-top: 1px solid var(--border);
+  }
+
+  /* The slip panel: fixed to the right edge, under the chrome. */
+  .sz-slip-panel {
+    position: fixed;
+    right: 0;
+    top: var(--chrome-h);
+    bottom: 0;
+    z-index: var(--z-rail);
+    width: var(--betslip-panel-w);
+    flex-direction: column;
+    background-color: var(--surface-1);
+    border-left: 1px solid var(--border);
+  }
+
+  /* Only a page that renders the panel makes room for it. */
+  [data-slip-panel="true"] .sz-main {
+    padding-right: calc(var(--betslip-panel-w) + var(--gutter-desktop));
   }
 
   @media (min-width: 1024px) {

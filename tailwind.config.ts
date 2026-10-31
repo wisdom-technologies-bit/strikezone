@@ -79,6 +79,7 @@ const config: Config = {
         "rail-expanded": "var(--rail-w-expanded)",
         "tabbar-h": "var(--tabbar-h)",
         "betslip-h": "var(--betslip-h)",
+        "betslip-w": "var(--betslip-panel-w)",
         "row-dense": "var(--row-h-dense)",
         half: "var(--space-half)",
       },

@@ -13,7 +13,7 @@ export interface NavItem {
 export const NAV_ITEMS: readonly NavItem[] = [
   { href: "/", label: "Home", icon: Home, tabLabel: "Home" },
   { href: "/live", label: "Live", icon: Radio, tabLabel: "Live" },
-  { href: "/tournaments", label: "Tournaments", icon: Trophy, tabLabel: "Tournaments" },
+  { href: "/tournaments", label: "Tournaments", icon: Trophy, tabLabel: "Events" },
   { href: "/wallet", label: "Wallet", icon: Wallet, tabLabel: "Wallet" },
   { href: "/bets", label: "My bets", icon: ReceiptText, tabLabel: "Me" },
   { href: "/fairness", label: "Fairness", icon: ShieldCheck, tabLabel: "Fair" },

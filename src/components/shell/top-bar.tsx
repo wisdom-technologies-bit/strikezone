@@ -10,11 +10,13 @@ import type { PublicConfig } from "@/lib/config";
 
 export interface TopBarProps {
   config: PublicConfig;
-  /** Minor units. Placeholder until the wallet lands. */
+  /** Minor units. Only rendered for a signed-in session. */
   balanceMinor?: number;
+  /** No auth screens yet, so this is false everywhere for now. */
+  signedIn?: boolean;
 }
 
-export function TopBar({ config, balanceMinor = 0 }: TopBarProps) {
+export function TopBar({ config, balanceMinor = 0, signedIn = false }: TopBarProps) {
   const toast = useToast();
 
   return (
@@ -28,17 +30,19 @@ export function TopBar({ config, balanceMinor = 0 }: TopBarProps) {
       </Link>
 
       <div className="ml-auto flex min-w-0 items-center gap-2">
-        <span
-          className="flex h-control-sm min-w-0 items-center gap-1 rounded-control border border-line bg-raised px-2"
-          aria-label={`Balance ${formatMoney(balanceMinor, config.currency)}`}
-        >
-          <span className="num truncate text-small text-ink">
-            {formatMoney(balanceMinor, config.currency)}
+        {signedIn ? (
+          <span
+            className="flex h-control-sm min-w-0 items-center gap-1 rounded-control border border-line bg-raised px-2"
+            aria-label={`Balance ${formatMoney(balanceMinor, config.currency)}`}
+          >
+            <span className="num truncate text-small text-ink">
+              {formatMoney(balanceMinor, config.currency)}
+            </span>
+            {config.moneyMode === "virtual" ? (
+              <span className="hidden text-micro text-ink-faint sm:inline">test</span>
+            ) : null}
           </span>
-          {config.moneyMode === "virtual" ? (
-            <span className="hidden text-micro text-ink-faint sm:inline">test</span>
-          ) : null}
-        </span>
+        ) : null}
 
         <Button
           size="sm"

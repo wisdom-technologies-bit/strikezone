@@ -16,7 +16,9 @@ export function NoticeStrip({ moneyMode }: NoticeStripProps) {
       <Badge tone="test-coins" dot={false}>
         test coins
       </Badge>
-      <p className="truncate">No real money. Stakes and payouts here are virtual.</p>
+      {/* Short copy below 640, the full sentence above it. Never truncated. */}
+      <p className="min-w-0 sm:hidden">Test coins: no real money</p>
+      <p className="hidden min-w-0 sm:block">No real money. Stakes and payouts here are virtual.</p>
     </div>
   );
 }

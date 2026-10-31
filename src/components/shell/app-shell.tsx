@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import type { CSSProperties, ReactNode } from "react";
 import { TopBar } from "./top-bar";
 import { NoticeStrip } from "./notice-strip";
@@ -8,6 +9,9 @@ import { Rail } from "./rail";
 import { TabBar } from "./tab-bar";
 import { BetSlipSlot } from "./bet-slip-slot";
 import { getPublicConfig } from "@/lib/config";
+import { useSlip } from "@/lib/slip/use-slip";
+import { shouldShowSlipBar, shouldShowSlipPanel } from "@/lib/slip/visibility";
+import { isMatchPath } from "./bet-slip-slot";
 
 const RAIL_KEY = "sz.rail.expanded";
 
@@ -30,7 +34,14 @@ function writeRailPreference(expanded: boolean): void {
 
 export function AppShell({ children }: { children: ReactNode }) {
   const config = getPublicConfig();
+  const pathname = usePathname();
+  const slip = useSlip();
   const [expanded, setExpanded] = useState(false);
+
+  const slipInput = {
+    selectionCount: slip.selections.length,
+    isMatchPage: isMatchPath(pathname),
+  };
 
   useEffect(() => {
     setExpanded(readRailPreference());
@@ -53,7 +64,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   } as CSSProperties;
 
   return (
-    <div style={shellStyle} className="min-h-dvh">
+    <div
+      style={shellStyle}
+      className="min-h-dvh"
+      data-slip-bar={shouldShowSlipBar(slipInput) ? "true" : "false"}
+      data-slip-panel={shouldShowSlipPanel(slipInput) ? "true" : "false"}
+    >
       <header className="sz-chrome">
         <TopBar config={config} />
         <NoticeStrip moneyMode={config.moneyMode} />
