@@ -1,27 +1,32 @@
-# src/app
+# Routes
 
-Next.js App Router routes. Empty in this commit: no pages, layouts or route
-handlers yet.
+| Route          | File                   | State                                                                   |
+| -------------- | ---------------------- | ----------------------------------------------------------------------- |
+| `/`            | `page.tsx`             | Title only                                                              |
+| `/live`        | `live/page.tsx`        | Title only                                                              |
+| `/tournaments` | `tournaments/page.tsx` | Title only                                                              |
+| `/wallet`      | `wallet/page.tsx`      | Title only                                                              |
+| `/bets`        | `bets/page.tsx`        | Title only                                                              |
+| `/fairness`    | `fairness/page.tsx`    | Title only                                                              |
+| `/dev/ui`      | `dev/ui/page.tsx`      | Design system gallery; 404 in production                                |
+| `icon.svg`     |                        | Favicon, carrom board, tokens inlined because a favicon cannot read CSS |
 
-## What goes here
+`layout.tsx` holds the fonts, metadata, skip link, toast and tooltip providers, and the app
+shell. Every page is a server component until something needs state.
 
-- `layout.tsx` and `page.tsx` for public pages: home, matches, a match page, the
-  wallet, the player's bets.
-- Route handlers (`route.ts`) for anything that needs a server secret: the
-  admin proxy under `/<ADMIN_ROUTE_SLUG>`, which is the only place `ADMIN_API_KEY`
-  and `SUPABASE_SERVICE_ROLE_KEY` may be read.
-- No `app/admin` directory, ever. Admin routing comes from `ADMIN_ROUTE_SLUG`.
+## Task 2 notes
 
-## Rules that apply here
+All six product routes were created empty on purpose: this task built the design system and
+the shell, not any screen. Each one draws only its title, so the shell is what you see.
 
-- Default exports only where Next requires them (page, layout, route handlers,
-  error and loading files). Everything else is a named export.
-- Every external input (form body, search params, webhook payload) is parsed with
-  Zod before use.
-- Server components read `GET /api/config` for `currency` and `moneyMode`; no
-  currency code is hardcoded in a route.
+There is no `/admin` route and there never will be: the admin area lives under
+`ADMIN_ROUTE_SLUG` (rule 7).
 
 ## How to test
 
-Nothing to run yet. Once pages exist: `npm run dev`, then check 360px width first,
-no horizontal scroll, and a plain 404 on any admin path that is not the slug.
+```sh
+npm run build && npx next start -p 3000
+curl -s -o /dev/null -w "%{http_code}" localhost:3000/dev/ui   # 404 in production
+npm run dev
+curl -s -o /dev/null -w "%{http_code}" localhost:3000/dev/ui   # 200 in development
+```

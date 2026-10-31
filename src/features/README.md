@@ -3,15 +3,15 @@
 One folder per feature. Each folder has its own README recording what was built
 and how to test it, and each is updated by every task that touches it.
 
-| Folder        | Scope                                                                 |
-| ------------- | --------------------------------------------------------------------- |
+| Folder        | Scope                                                                  |
+| ------------- | ---------------------------------------------------------------------- |
 | `auth`        | Supabase sign-in, session, the bearer token, sign-out, self-exclusion  |
 | `matches`     | Lists (live, upcoming, recent), the match page, the live socket view   |
 | `markets`     | Market and selection rendering, odds, stake entry, the odds-moved flow |
 | `bets`        | The player's bets, open and settled, the pending-review wording        |
 | `wallet`      | Balance, transactions, deposits, withdrawals, limits                   |
-| `tournaments` | Tournament list, one tournament, its bracket                          |
-| `admin`       | Server-only admin proxy under `/<ADMIN_ROUTE_SLUG>`                   |
+| `tournaments` | Tournament list, one tournament, its bracket                           |
+| `admin`       | Server-only admin proxy under `/<ADMIN_ROUTE_SLUG>`                    |
 
 Folders are created; no feature code exists yet.
 
